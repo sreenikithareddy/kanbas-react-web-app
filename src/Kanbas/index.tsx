@@ -5,6 +5,8 @@ import Dashboard from './Dashboard';
 import Courses from './Courses';
 import KanbasNavigation from '../Kanbas/Navigation';
 import db from './Database';
+import { Provider } from "react-redux";
+import store from "./store";
 
 const Kanbas: React.FC = () => {
   const [courses, setCourses] = useState<any[]>(db.courses);
@@ -32,6 +34,7 @@ const Kanbas: React.FC = () => {
   };
 
   return (
+    <Provider store={store}>
     <div id="wd-kanbas" className="h-100">
       <div className="d-flex h-100">
         <div className="d-none d-md-block bg-black">
@@ -61,6 +64,7 @@ const Kanbas: React.FC = () => {
         </div>
       </div>
     </div>
+    </Provider>
   );
 };
 
