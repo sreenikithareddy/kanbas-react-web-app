@@ -19,10 +19,13 @@ import { useNavigate } from "react-router-dom";
 export default function Assignments() {
   const { cid } = useParams();
   const { assignments } = useSelector((state: any) => state.assignmentReducer);
+  const { modules } = useSelector((state: any) => state.modulesReducer);
+  const courseModules = modules.filter((module:any) => module.course === cid);
   const dispatch = useDispatch();
-  function getAssignmentsForCourse(cid: String) {
-    return assignments.filter((assignment: any) => assignment.course === cid);
-  }
+  const courseAssignments = assignments.filter((assignment : any) => 
+    courseModules.some((module:any) => module._id === assignment.module)
+  );
+
 
   const navigate = useNavigate();
 
@@ -31,7 +34,6 @@ export default function Assignments() {
     navigate(`${id}`);
   };
 
-  const results = getAssignmentsForCourse(cid + "");
 
   return (
     <div id="wd-assignments" className="container mt-4">
@@ -77,7 +79,7 @@ export default function Assignments() {
         <ModuleControlButtons />
       </h3>
       <ul id="wd-assignment-list" className="list-group rounded-0">
-        {results.map((assignment: any) => (
+        {courseAssignments.map((assignment: any) => (
           <li
             key={assignment?._id}
             className="wd-assignment-list-item list-group-item p-0 mb-5 fs-5 border-gray d-flex align-items-center"
