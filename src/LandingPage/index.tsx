@@ -10,6 +10,7 @@ export default function LandingPage() {
         <li><Link to="/Labs/Lab1">Lab 1</Link></li>
         <li><Link to="/Labs/Lab2">Lab 2</Link></li>
         <li><Link to="/Labs/Lab3">Lab 3</Link></li>
+        <li><Link to="/Labs/Lab4">Lab 4</Link></li>
         {/* Add more links for other labs as needed */}
       </ul>
       <h2>Kanbas Application</h2>

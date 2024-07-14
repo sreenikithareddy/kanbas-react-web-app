@@ -3,16 +3,26 @@ import Modules from "./Modules";
 import Home from "./Home";
 import Assignments from "./Assignments";
 import AssignmentEditor from "./Assignments/Editor";
-import { Navigate, Route, Routes } from "react-router";
+import { Navigate, Route, Routes ,useParams ,useLocation } from "react-router";
 import { FaAlignJustify } from "react-icons/fa";
 // import EditAssignment from './EditAssignment';
 import Grades from './Grades';
-export default function Courses() {
+export default function Courses({ courses }: { courses: any[]; }) {
+  const { cid } = useParams();
+  console.log("inside course page"+cid);
+  const course = courses.find((course) => course._id === cid);
+  const { pathname } = useLocation();
   return (
     <div id="wd-courses">
       <h2 className="text-danger"><FaAlignJustify className="me-4 fs-4 mb-1" />
-        Course 1234</h2>
+      {course && course.name} &gt; {pathname.split("/")[4]}</h2>
       <hr />
+      <div className="d-flex">
+    <div className="d-none d-md-block">
+      <CoursesNavigation />
+    </div>
+    <div className="flex-fill">
+
       <div className="d-flex">
     <div className="d-none d-md-block">
       <CoursesNavigation />
@@ -27,7 +37,13 @@ export default function Courses() {
               <Route path="Assignments/:aid" element={<AssignmentEditor />} />
               {/* <Route path="assignments/edit" element={<EditAssignment />} /> */}
       <Route path="grades" element={<Grades />} />
+              <Route path="Assignments/:aid" element={<AssignmentEditor />} />
+              {/* <Route path="assignments/edit" element={<EditAssignment />} /> */}
+      <Route path="grades" element={<Grades />} />
             </Routes>
+            </div>
+  </div>
+         
             </div>
   </div>
          
