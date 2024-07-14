@@ -23,6 +23,12 @@ export default function Courses({ courses }: { courses: any[]; }) {
     </div>
     <div className="flex-fill">
 
+      <div className="d-flex">
+    <div className="d-none d-md-block">
+      <CoursesNavigation />
+    </div>
+    <div className="flex-fill">
+
             <Routes>
               <Route path="/" element={<Navigate to="Home" />} />
               <Route path="Home" element={<Home />} />
@@ -31,7 +37,13 @@ export default function Courses({ courses }: { courses: any[]; }) {
               <Route path="Assignments/:aid" element={<AssignmentEditor />} />
               {/* <Route path="assignments/edit" element={<EditAssignment />} /> */}
       <Route path="grades" element={<Grades />} />
+              <Route path="Assignments/:aid" element={<AssignmentEditor />} />
+              {/* <Route path="assignments/edit" element={<EditAssignment />} /> */}
+      <Route path="grades" element={<Grades />} />
             </Routes>
+            </div>
+  </div>
+         
             </div>
   </div>
          
