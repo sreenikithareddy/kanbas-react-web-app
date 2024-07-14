@@ -5,12 +5,6 @@ import "./index.css";
 
 const links = ["Home", "Modules", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades"];
 
-import React from 'react';
-import { NavLink, useParams, useLocation } from 'react-router-dom';
-import { FaAlignJustify } from 'react-icons/fa';
-import "./index.css";
-
-const links = ["Home", "Modules", "Piazza", "Zoom", "Assignments", "Quizzes", "Grades"];
 
 export default function CoursesNavigation() {
     const { cid } = useParams();
