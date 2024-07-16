@@ -1,15 +1,13 @@
-// Kanbas.tsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import Courses from './Courses';
 import KanbasNavigation from '../Kanbas/Navigation';
-import db from './Database';
 import { Provider } from "react-redux";
 import store from "./store";
 
 const Kanbas: React.FC = () => {
-  const [courses, setCourses] = useState<any[]>(db.courses);
+  const [courses, setCourses] = useState<any[]>([]);
   const [course, setCourse] = useState<any>({
     _id: '1234',
     name: 'New Course',
@@ -35,35 +33,35 @@ const Kanbas: React.FC = () => {
 
   return (
     <Provider store={store}>
-    <div id="wd-kanbas" className="h-100">
-      <div className="d-flex h-100">
-        <div className="d-none d-md-block bg-black">
-          <KanbasNavigation />
-        </div>
-        <div className="flex-fill p-4">
-          <Routes>
-            <Route path="/" element={<Navigate to="Dashboard" />} />
-            <Route path="Account" element={<h1>Account</h1>} />
-            <Route
-              path="Dashboard"
-              element={
-                <Dashboard
-                  courses={courses}
-                  course={course}
-                  setCourse={setCourse}
-                  addNewCourse={addNewCourse}
-                  deleteCourse={deleteCourse}
-                  updateCourse={updateCourse}
-                />
-              }
-            />
-            <Route path="Courses/:cid/*" element={<Courses courses={courses} />} />
-            <Route path="Calendar" element={<h1>Calendar</h1>} />
-            <Route path="Inbox" element={<h1>Inbox</h1>} />
-          </Routes>
+      <div id="wd-kanbas" className="h-100">
+        <div className="d-flex h-100">
+          <div className="d-none d-md-block bg-black">
+            <KanbasNavigation />
+          </div>
+          <div className="flex-fill p-4">
+            <Routes>
+              <Route path="/" element={<Navigate to="Dashboard" />} />
+              <Route path="Account" element={<h1>Account</h1>} />
+              <Route
+                path="Dashboard"
+                element={
+                  <Dashboard
+                    courses={courses}
+                    course={course}
+                    setCourse={setCourse}
+                    addNewCourse={addNewCourse}
+                    deleteCourse={deleteCourse}
+                    updateCourse={updateCourse}
+                  />
+                }
+              />
+              <Route path="Courses/:cid/*" element={<Courses courses={courses} />} />
+              <Route path="Calendar" element={<h1>Calendar</h1>} />
+              <Route path="Inbox" element={<h1>Inbox</h1>} />
+            </Routes>
+          </div>
         </div>
       </div>
-    </div>
     </Provider>
   );
 };
