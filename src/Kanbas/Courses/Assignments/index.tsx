@@ -1,104 +1,46 @@
-import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import ModuleControlButtons from "./ModuleControlButtons";
+import ModuleControlChecks from "./ModuleControlChecks";
+import { BsGripVertical } from "react-icons/bs";
+import { IoNewspaperSharp } from "react-icons/io5";
+import { FaPlus } from "react-icons/fa";
+import { BsSearch } from "react-icons/bs";
+import { useParams } from "react-router";
+// import * as db from "../../Kanbas/Database";
+import { useSelector, useDispatch } from "react-redux";
+import * as client from "./client";
+import React, { useState, useEffect } from "react";
 import {
-  setAssignments,
-  addAssignment,
   deleteAssignment,
-  updateAssignment,
-} from './reducer';
-import * as client from './client';
-import ModuleControlButtons from './ModuleControlButtons';
-import ModuleControlChecks from './ModuleControlChecks';
-import { BsGripVertical } from 'react-icons/bs';
-import { IoNewspaperSharp } from 'react-icons/io5';
-import { FaPlus } from 'react-icons/fa';
-import { BsSearch } from 'react-icons/bs';
-
+} from "./reducer";
+import { useNavigate } from "react-router-dom";
 export default function Assignments() {
-  const { cid } = useParams<{ cid: string }>();
+  const { cid } = useParams();
   const dispatch = useDispatch();
+  const [results, setResults] = useState<any[]>([]);
+  async function getAssignmentsForCourse(cid: String) {
+    const assignments = await client.findAssignmentsForCourse(cid as string);
+    setResults(
+      assignments.filter((assignment: any) => assignment.course === cid)
+    );
+  }
+
   const navigate = useNavigate();
-  const assignments = useSelector((state: any) => state.assignmentReducer.assignments);
-  const [modules, setModules] = useState<any[]>([]);
-
-  useEffect(() => {
-    const fetchAssignmentsAndModules = async () => {
-      if (cid) {
-        try {
-          // Fetch and set assignments
-          const assignmentsData = await client.findAssignmentsForCourse(cid);
-          console.log('Fetched assignments:', assignmentsData);
-          dispatch(setAssignments(assignmentsData));
-
-          // Fetch and set modules
-          const modulesData = await client.findModulesForCourse(cid); // Implement this function to fetch modules
-          console.log('Fetched modules:', modulesData);
-          setModules(modulesData);
-        } catch (error) {
-          console.error("Error fetching assignments or modules: ", error);
-        }
-      }
-    };
-
-    fetchAssignmentsAndModules();
-  }, [cid, dispatch]);
-
-  console.log('Assignments from state:', assignments);
-  console.log('Modules from state:', modules);
-  console.log('Course ID:', cid);
-
-  const courseModules = modules.filter((module: any) => module.course === cid);
-  console.log('Filtered courseModules:', courseModules);
-
-  const courseAssignments = assignments.filter((assignment: any) =>
-    courseModules.some((module: any) => module._id === assignment.module)
-  );
-  console.log('Filtered courseAssignments:', courseAssignments);
-
-  const [assignmentName, setAssignmentName] = useState('');
-
-  const handleAddAssignment = async () => {
-    if (cid && courseModules.length > 0) {
-      try {
-        const newAssignment = await client.createAssignment(cid, { title: assignmentName, module: courseModules[0]._id, description: '', points: 0, dueDate: '', availableDate: '' });
-        console.log('New assignment:', newAssignment);
-        dispatch(addAssignment(newAssignment));
-        setAssignmentName('');
-      } catch (error) {
-        console.error("Error adding assignment:", error);
-      }
-    }
-  };
-
-  const handleDeleteAssignment = async (assignmentId: string) => {
-    try {
-      await client.deleteAssignment(assignmentId);
-      dispatch(deleteAssignment(assignmentId));
-    } catch (error) {
-      console.error("Error deleting assignment:", error);
-    }
-  };
-
-  const handleUpdateAssignment = async (assignmentId: string, title: string) => {
-    if (cid) {
-      const assignmentToUpdate = assignments.find((assignment: any) => assignment._id === assignmentId);
-      if (assignmentToUpdate) {
-        try {
-          const updatedAssignment = { ...assignmentToUpdate, title, module: assignmentToUpdate.module };
-          await client.updateAssignment(updatedAssignment);
-          dispatch(updateAssignment(updatedAssignment));
-        } catch (error) {
-          console.error("Error updating assignment:", error);
-        }
-      }
-    }
-  };
 
   const navigateToEditAssignment = () => {
     let id = new Date().getTime().toString();
     navigate(`${id}`);
   };
+
+  const deleteAssignments = async (assignmentId: string) => {
+    console.log("meri id",assignmentId);
+    await client.deleteAssignment(assignmentId);
+    dispatch(deleteAssignment(assignmentId));
+    getAssignmentsForCourse(cid as string);
+  }
+
+  useEffect(() => {
+    getAssignmentsForCourse(cid as string);
+  }, []);
 
   return (
     <div id="wd-assignments" className="container mt-4">
@@ -141,9 +83,10 @@ export default function Assignments() {
         >
           40% of Total
         </button>
+        <ModuleControlButtons />
       </h3>
       <ul id="wd-assignment-list" className="list-group rounded-0">
-        {courseAssignments.map((assignment: any) => (
+        {results.map((assignment: any) => (
           <li
             key={assignment?._id}
             className="wd-assignment-list-item list-group-item p-0 mb-5 fs-5 border-gray d-flex align-items-center"
@@ -159,16 +102,12 @@ export default function Assignments() {
               </a>
               <br />
               <span style={{ color: "red" }}>Multiple Modules</span> |{" "}
-              <b>Not Available until</b> {assignment.availableDate} | <br />
-              <b>Due</b> {assignment.dueDate} | {assignment.points} pts
+              <b>Not Available until</b> May 6 at 12:00am | <br />
+              <b>Due</b> May 13 at 11:59pm | 100 pts
             </div>
-            <ModuleControlButtons
-              assignmentId={assignment._id}
-              deleteAssignment={handleDeleteAssignment}
-            />
             <ModuleControlChecks
               assignmentId={assignment._id}
-              deleteAssignment={handleDeleteAssignment}
+              deleteAssignment={deleteAssignments}
             />
           </li>
         ))}
