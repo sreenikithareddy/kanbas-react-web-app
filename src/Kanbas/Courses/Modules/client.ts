@@ -1,0 +1,24 @@
+import axios from 'axios';
+
+const REMOTE_SERVER = process.env.REACT_APP_REMOTE_SERVER;
+const MODULES_API = `${REMOTE_SERVER}/api/courses`;
+
+export const findModulesForCourse = async (courseId: string) => {
+  const response = await axios.get(`${MODULES_API}/${courseId}/modules`);
+  return response.data;
+};
+
+export const createModule = async (courseId: string, module: any) => {
+  const response = await axios.post(`${MODULES_API}/${courseId}/modules`, module);
+  return response.data;
+};
+
+export const updateModule = async (module: any) => {
+  const response = await axios.put(`${MODULES_API}/modules/${module._id}`, module);
+  return response.data;
+};
+
+export const deleteModule = async (moduleId: string) => {
+  const response = await axios.delete(`${MODULES_API}/modules/${moduleId}`);
+  return response.data;
+};

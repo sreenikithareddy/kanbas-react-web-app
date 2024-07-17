@@ -3,8 +3,9 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Dashboard from './Dashboard';
 import Courses from './Courses';
 import KanbasNavigation from '../Kanbas/Navigation';
-import { Provider } from "react-redux";
-import store from "./store";
+import { Provider } from 'react-redux';
+import store from './store';
+import { fetchAllCourses, createCourse, deleteCourse as deleteCourseClient, updateCourse as updateCourseClient } from './Courses/client';
 
 const Kanbas: React.FC = () => {
   const [courses, setCourses] = useState<any[]>([]);
@@ -17,15 +18,27 @@ const Kanbas: React.FC = () => {
     description: 'New Description',
   });
 
-  const addNewCourse = () => {
-    setCourses([...courses, { ...course, _id: new Date().getTime().toString() }]);
+  // Fetch courses from the server when the component mounts
+  useEffect(() => {
+    const fetchCourses = async () => {
+      const fetchedCourses = await fetchAllCourses();
+      setCourses(fetchedCourses);
+    };
+    fetchCourses();
+  }, []);
+
+  const addNewCourse = async () => {
+    const newCourse = await createCourse(course);
+    setCourses([...courses, newCourse]);
   };
 
-  const deleteCourse = (courseId: any) => {
-    setCourses(courses.filter((course) => course._id !== courseId));
+  const deleteCourse = async (courseId: string) => {
+    await deleteCourseClient(courseId);
+    setCourses(courses.filter((c) => c._id !== courseId));
   };
 
-  const updateCourse = () => {
+  const updateCourse = async () => {
+    await updateCourseClient(course);
     setCourses(
       courses.map((c) => (c._id === course._id ? course : c))
     );
