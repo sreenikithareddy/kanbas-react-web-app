@@ -21,19 +21,26 @@ export default function AssignmentEditor() {
     navigate(`/Kanbas/Courses/${cid}/Assignments`);
   };
 
-  async function getAssignmentsForCourse(cid: String) {
-    const assignments = await client.findAssignmentById(cid as string);
-    console.log(assignments);
-    setResults(assignments.filter((assignment: any) => assignment._id === aid));
-    if (assignments && assignments[0]) {
-      setTitle(assignments[0].title);
-      setPoints(assignments[0].points);
-      setDescription(assignments[0].description);
-      setDueDate(assignments[0].dueDate);
-      setAvailableFrom(assignments[0].availableFrom);
+  async function getAssignmentsForCourse(aid: String) {
+    try {
+      const assignment = await client.findAssignmentById(aid as string); // Fetch single assignment
+      console.log('Assignment:', assignment);
+      
+      if (assignment) {
+        // Set state variables from the fetched assignment
+        setTitle(assignment.title);
+        setPoints(assignment.points);
+        setDescription(assignment.description);
+        setDueDate(assignment.dueDate);
+        setAvailableFrom(assignment.availableFrom);
+      } else {
+        console.error('Assignment not found:', assignment);
+      }
+    } catch (error) {
+      console.error('Error fetching assignment:', error);
     }
   }
-
+  
   useEffect(() => {
     getAssignmentsForCourse(aid as string);
   }, []);
@@ -43,7 +50,7 @@ export default function AssignmentEditor() {
 
   const handleSaveAssignment = async () => {
     const assignmentData = {
-      _id: aid, // Ensure you pass the correct assignment _id
+      _id: aid, 
       title,
       course: cid,
       description,
